@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noEmitOnError": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "paths": {
+      "@choiceform/ui/*": ["node_modules/@choiceform/ui/addon/*"],
+      "@glimmer/tracking": [
+        "node_modules/ember-cached-decorator-polyfill",
+        "node_modules/@glimmer/tracking/dist/types"
+      ],
+      "crosstab/*": ["lib/crosstab/addon/*"],
+      "data-insight/*": ["lib/data-insight/addon/*"],
+      "ember-basic-dropdown/*": ["node_modules/ember-basic-dropdown/addon/*"],
+      "fetch": ["node_modules/ember-fetch"],
+      "os-dashboard": ["app"],
+      "os-dashboard/*": ["app/*"],
+      "os-dashboard/tests/*": ["tests/*"],
+      "share/*": ["lib/share/addon/*"],
+      "share-ui/*": ["lib/share-ui/addon/*"],
+      "visual-element/*": ["lib/visual-element/addon/*"],
+      "*": ["types/*"]
+    },
+    "pretty": true,
+    "skipLibCheck": true,
+    "strict": true,
+    // false because: https://github.com/NullVoxPopuli/ember-resources/issues/48#issuecomment-871503724
+    "strictFunctionTypes": false,
+    "target": "ESNext",
+    "types": []
+  },
+  "include": [
+    "app/**/*",
+    "lib/crosstab/**/*",
+    "lib/data-insight/**/*",
+    "lib/ember-svg-jar-patch/**/*",
+    "lib/share/**/*",
+    "lib/share-ui/**/*",
+    "lib/visual-element/**/*",
+    "mirage/**/*",
+    "tests/**/*",
+    "types/**/*"
+  ],
+  "typedocOptions": {
+    "exclude": ["app/**/*.js"],
+    "excludeExternals": true,
+    "hideGenerator": true,
+    "ignoreCompilerErrors": true,
+    "includeDeclarations": true,
+    "inputFiles": [
+      "app/components/surveys-page/reports",
+      "app/models",
+      "app/modifiers"
+    ],
+    "mode": "file",
+    "name": "Online Survey Dashboard",
+    "readme": "none",
+    "out": "docs",
+    "theme": "default"
+  }
+}
