@@ -8,120 +8,50 @@
 // This is the highest performance approach, but its also verbose and none modular
 // Therefore using the CST Visitor is the recommended approach:
 // https://chevrotain.io/docs/tutorial/step3a_adding_actions_visitor.html
-import selectLexer from './step1';
+import sumLexer from './step1';
 import chevrotain from 'chevrotain';
-const tokenVocabulary = selectLexer.tokenVocabulary;
+const tokenVocabulary = sumLexer.tokenVocabulary;
 
 // individual imports, prefer ES6 imports if supported in your runtime/transpiler...
-const Select = tokenVocabulary.Select;
-const From = tokenVocabulary.From;
-const Where = tokenVocabulary.Where;
-const Identifier = tokenVocabulary.Identifier;
-const Integer = tokenVocabulary.Integer;
-const GreaterThan = tokenVocabulary.GreaterThan;
-const LessThan = tokenVocabulary.LessThan;
-const Comma = tokenVocabulary.Comma;
+const { Sum, Identifier, LeftParenthesis, RightParenthesis, PlusSign } =
+  tokenVocabulary;
 
 // ----------------- parser -----------------
-class SelectParserEmbedded extends chevrotain.EmbeddedActionsParser {
+class SumParserEmbedded extends chevrotain.EmbeddedActionsParser {
   constructor() {
     super(tokenVocabulary);
     const $ = this;
 
-    this.selectStatement = $.RULE('selectStatement', () => {
-      let select, from, where;
+    this.sumStatement = $.RULE('sumStatement', () => {
+      let sum;
 
-      select = $.SUBRULE($.selectClause);
-      from = $.SUBRULE($.fromClause);
-      $.OPTION(() => {
-        where = $.SUBRULE($.whereClause);
-      });
+      sum = $.SUBRULE($.sumClause);
 
       // Each Grammar rule can return a value, these values can be combined to create a new data structure
       // in our case an AST.
       return {
-        type: 'SELECT_STMT',
-        selectClause: select,
-        fromClause: from,
-        // may be undefined if the OPTION was not entered.
-        whereClause: where,
+        type: 'Sum_STMT',
+        sumClause: sum,
       };
     });
 
-    this.selectClause = $.RULE('selectClause', () => {
+    this.sumClause = $.RULE('sumClause', () => {
       const columns = [];
 
-      $.CONSUME(Select);
+      $.CONSUME(Sum);
+      $.CONSUME(LeftParenthesis);
       $.AT_LEAST_ONE_SEP({
-        SEP: Comma,
+        SEP: PlusSign,
         DEF: () => {
           columns.push($.CONSUME(Identifier).image);
         },
       });
+      $.CONSUME(RightParenthesis);
 
       return {
-        type: 'SELECT_CLAUSE',
+        type: 'Sum_CLAUSE',
         columns: columns,
       };
-    });
-
-    this.fromClause = $.RULE('fromClause', () => {
-      let table;
-
-      $.CONSUME(From);
-      table = $.CONSUME(Identifier).image;
-
-      return {
-        type: 'FROM_CLAUSE',
-        table: table,
-      };
-    });
-
-    this.whereClause = $.RULE('whereClause', () => {
-      let condition;
-
-      $.CONSUME(Where);
-      condition = $.SUBRULE($.expression);
-
-      return {
-        type: 'WHERE_CLAUSE',
-        condition: condition,
-      };
-    });
-
-    this.expression = $.RULE('expression', () => {
-      let lhs, operator, rhs;
-
-      lhs = $.SUBRULE($.atomicExpression);
-      operator = $.SUBRULE($.relationalOperator);
-      rhs = $.SUBRULE2($.atomicExpression); // note the '2' suffix to distinguish
-      // from the 'SUBRULE(atomicExpression)'
-      // 2 lines above.
-
-      return {
-        type: 'EXPRESSION',
-        lhs: lhs,
-        operator: operator,
-        rhs: rhs,
-      };
-    });
-
-    this.atomicExpression = $.RULE('atomicExpression', () => {
-      return $.OR([
-        { ALT: () => $.CONSUME(Integer) },
-        { ALT: () => $.CONSUME(Identifier) },
-      ]).image;
-    });
-
-    this.relationalOperator = $.RULE('relationalOperator', () => {
-      return $.OR([
-        {
-          ALT: () => $.CONSUME(GreaterThan),
-        },
-        {
-          ALT: () => $.CONSUME(LessThan),
-        },
-      ]).image;
     });
 
     // very important to call this after all the rules have been defined.
@@ -132,17 +62,17 @@ class SelectParserEmbedded extends chevrotain.EmbeddedActionsParser {
 }
 
 // We only ever need one as the parser internal state is reset for each new input.
-const parserInstance = new SelectParserEmbedded();
+const parserInstance = new SumParserEmbedded();
 
 export default {
   toAst: function (inputText) {
-    const lexResult = selectLexer.lex(inputText);
+    const lexResult = sumLexer.lex(inputText);
 
     // ".input" is a setter which will reset the parser's internal's state.
     parserInstance.input = lexResult.tokens;
 
     // No semantic actions so this won't return anything yet.
-    const ast = parserInstance.selectStatement();
+    const ast = parserInstance.sumStatement();
 
     if (parserInstance.errors.length > 0) {
       throw Error(

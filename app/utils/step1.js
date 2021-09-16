@@ -3,7 +3,7 @@
 // https://chevrotain.io/docs/tutorial/step1_lexing.html
 
 // Tutorial Step 1:
-// Implementation of A lexer for a simple SELECT statement grammar
+// Implementation of A lexer for a simple SUM statement grammar
 import chevrotain from 'chevrotain';
 const Lexer = chevrotain.Lexer;
 const createToken = chevrotain.createToken;
@@ -13,31 +13,29 @@ const tokenVocabulary = {};
 
 // createToken is used to create a TokenType
 // The Lexer's output will contain an array of token Objects created by metadata
-const Identifier = createToken({ name: 'Identifier', pattern: /[a-zA-Z]\w*/ });
+const Identifier = createToken({
+  name: 'Identifier',
+  pattern: /\[[a-zA-Z]\w*\]/,
+});
 
 // We specify the "longer_alt" property to resolve keywords vs identifiers ambiguity.
 // See: https://github.com/chevrotain/chevrotain/blob/master/examples/lexer/keywords_vs_identifiers/keywords_vs_identifiers.js
-const Select = createToken({
-  name: 'Select',
-  pattern: /SELECT/,
+const Sum = createToken({
+  name: 'Sum',
+  pattern: /SUM/,
   longer_alt: Identifier,
 });
 
-const From = createToken({
-  name: 'From',
-  pattern: /FROM/,
-  longer_alt: Identifier,
+const LeftParenthesis = createToken({ name: 'LeftParenthesis', pattern: /\(/ });
+const RightParenthesis = createToken({
+  name: 'RightParenthesis',
+  pattern: /\)/,
 });
-const Where = createToken({
-  name: 'Where',
-  pattern: /WHERE/,
-  longer_alt: Identifier,
+const PlusSign = createToken({
+  name: 'PlusSign',
+  pattern: /\+/,
 });
 
-const Comma = createToken({ name: 'Comma', pattern: /,/ });
-const Integer = createToken({ name: 'Integer', pattern: /0|[1-9]\d*/ });
-const GreaterThan = createToken({ name: 'GreaterThan', pattern: />/ });
-const LessThan = createToken({ name: 'LessThan', pattern: /</ });
 const WhiteSpace = createToken({
   name: 'WhiteSpace',
   pattern: /\s+/,
@@ -48,18 +46,15 @@ const WhiteSpace = createToken({
 const allTokens = [
   WhiteSpace,
   // "keywords" appear before the Identifier
-  Select,
-  From,
-  Where,
-  Comma,
+  Sum,
+  LeftParenthesis,
+  RightParenthesis,
+  PlusSign,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
   Identifier,
-  Integer,
-  GreaterThan,
-  LessThan,
 ];
 
-const SelectLexer = new Lexer(allTokens);
+const SumLexer = new Lexer(allTokens);
 
 allTokens.forEach((tokenType) => {
   tokenVocabulary[tokenType.name] = tokenType;
@@ -69,7 +64,7 @@ export default {
   tokenVocabulary: tokenVocabulary,
 
   lex: function (inputText) {
-    const lexingResult = SelectLexer.tokenize(inputText);
+    const lexingResult = SumLexer.tokenize(inputText);
 
     if (lexingResult.errors.length > 0) {
       throw Error('Sad Sad Panda, lexing errors detected');

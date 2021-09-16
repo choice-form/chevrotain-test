@@ -7,78 +7,36 @@
 // Adding a Parser (grammar only, only reads the input without any actions).
 // Using the Token Vocabulary defined in the previous step.
 
-import selectLexer from './step1';
+import sumLexer from './step1';
 import chevrotain from 'chevrotain';
-const tokenVocabulary = selectLexer.tokenVocabulary;
+const tokenVocabulary = sumLexer.tokenVocabulary;
 
 // individual imports, prefer ES6 imports if supported in your runtime/transpiler...
-const Select = tokenVocabulary.Select;
-const From = tokenVocabulary.From;
-const Where = tokenVocabulary.Where;
-const Identifier = tokenVocabulary.Identifier;
-const Integer = tokenVocabulary.Integer;
-const GreaterThan = tokenVocabulary.GreaterThan;
-const LessThan = tokenVocabulary.LessThan;
-const Comma = tokenVocabulary.Comma;
+const { Sum, Identifier, LeftParenthesis, RightParenthesis, PlusSign } =
+  tokenVocabulary;
 
 // ----------------- parser -----------------
-class SelectParser extends chevrotain.CstParser {
+class SumParser extends chevrotain.CstParser {
   constructor() {
     super(tokenVocabulary);
 
     // for conciseness
     const $ = this;
 
-    $.RULE('selectStatement', () => {
-      $.SUBRULE($.selectClause);
-      $.SUBRULE($.fromClause);
-      $.OPTION(() => {
-        $.SUBRULE($.whereClause);
-      });
+    $.RULE('sumStatement', () => {
+      $.SUBRULE($.sumClause);
     });
 
-    $.RULE('selectClause', () => {
-      $.CONSUME(Select);
+    $.RULE('sumClause', () => {
+      $.CONSUME(Sum);
+      $.CONSUME(LeftParenthesis);
       $.AT_LEAST_ONE_SEP({
-        SEP: Comma,
+        SEP: PlusSign,
         DEF: () => {
           $.CONSUME(Identifier);
         },
       });
-    });
-
-    $.RULE('fromClause', () => {
-      $.CONSUME(From);
-      $.CONSUME(Identifier);
-    });
-
-    $.RULE('whereClause', () => {
-      $.CONSUME(Where);
-      $.SUBRULE($.expression);
-    });
-
-    // The "rhs" and "lhs" (Right/Left Hand Side) labels will provide easy
-    // to use names during CST Visitor (step 3a).
-    $.RULE('expression', () => {
-      $.SUBRULE($.atomicExpression, { LABEL: 'lhs' });
-      $.SUBRULE($.relationalOperator);
-      $.SUBRULE2($.atomicExpression, { LABEL: 'rhs' }); // note the '2' suffix to distinguish
-      // from the 'SUBRULE(atomicExpression)'
-      // 2 lines above.
-    });
-
-    $.RULE('atomicExpression', () => {
-      $.OR([
-        { ALT: () => $.CONSUME(Integer) },
-        { ALT: () => $.CONSUME(Identifier) },
-      ]);
-    });
-
-    $.RULE('relationalOperator', () => {
-      $.OR([
-        { ALT: () => $.CONSUME(GreaterThan) },
-        { ALT: () => $.CONSUME(LessThan) },
-      ]);
+      $.CONSUME(RightParenthesis);
     });
 
     // very important to call this after all the rules have been defined.
@@ -89,21 +47,21 @@ class SelectParser extends chevrotain.CstParser {
 }
 
 // We only ever need one as the parser internal state is reset for each new input.
-const parserInstance = new SelectParser();
+const parserInstance = new SumParser();
 
 export default {
   parserInstance: parserInstance,
 
-  SelectParser: SelectParser,
+  SumParser: SumParser,
 
   parse: function (inputText) {
-    const lexResult = selectLexer.lex(inputText);
+    const lexResult = sumLexer.lex(inputText);
 
     // ".input" is a setter which will reset the parser's internal's state.
     parserInstance.input = lexResult.tokens;
 
     // No semantic actions so this won't return anything yet.
-    // parserInstance.selectStatement();
+    // parserInstance.sumStatement();
 
     if (parserInstance.errors.length > 0) {
       throw Error(
