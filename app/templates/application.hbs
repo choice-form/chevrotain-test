@@ -1,8 +1,16 @@
-{{page-title "ChevrotainDemo"}}
+{{page-title 'ChevrotainDemo'}}
 
-<div>
-  <label>transform inputValue to Ast<Input @value={{this.value}} /></label>
-  <button type="button" {{on "click" this.transformAst}}>转换</button>
+<div class='item'>
+  <label>transform sql inputValue to Ast<Input
+      @value={{this.sqlValue}}
+    /></label>
+  <button type='button' {{on 'click' this.transformSQLAst}}>SQL转换</button>
+</div>
+<div class='item'>
+  <label>transform sum inputValue to Ast<Input
+      @value={{this.sumValue}}
+    /></label>
+  <button type='button' {{on 'click' this.transformSUMAst}}>SUM转换</button>
 </div>
 
 {{outlet}}

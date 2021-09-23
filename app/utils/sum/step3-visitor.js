@@ -47,25 +47,25 @@ class SQLToAstVisitor extends BaseSQLVisitor {
 // Our visitor has no state, so a single instance is sufficient.
 const toAstVisitorInstance = new SQLToAstVisitor();
 
-export default {
-  toAst: function (inputText) {
-    const lexResult = sumLexer.lex(inputText);
+const toAst = function (inputText) {
+  const lexResult = sumLexer.lex(inputText);
 
-    // ".input" is a setter which will reset the parser's internal's state.
-    parserInstance.input = lexResult.tokens;
+  // ".input" is a setter which will reset the parser's internal's state.
+  parserInstance.input = lexResult.tokens;
 
-    // Automatic CST created when parsing
-    const cst = parserInstance.sumStatement();
+  // Automatic CST created when parsing
+  const cst = parserInstance.sumStatement();
 
-    if (parserInstance.errors.length > 0) {
-      throw Error(
-        'Sad sad panda, parsing errors detected!\n' +
-          parserInstance.errors[0].message
-      );
-    }
+  if (parserInstance.errors.length > 0) {
+    throw Error(
+      'Sad sad panda, parsing errors detected!\n' +
+        parserInstance.errors[0].message
+    );
+  }
 
-    const ast = toAstVisitorInstance.visit(cst);
+  const ast = toAstVisitorInstance.visit(cst);
 
-    return ast;
-  },
+  return ast;
 };
+
+export { toAst };
