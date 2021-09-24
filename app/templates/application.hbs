@@ -30,4 +30,9 @@
   <button type='button' {{on 'click' this.transformAnyAst}}>Any转换</button>
 </div>
 
+<div class='item'>
+  <label>error<Input @value={{this.errorValue}} /></label>
+  <button type='button' {{on 'click' this.errorFun}}>testError</button>
+</div>
+
 {{outlet}}
