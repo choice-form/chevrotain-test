@@ -13,4 +13,14 @@
   <button type='button' {{on 'click' this.transformSUMAst}}>SUM转换</button>
 </div>
 
+<div class='item'>
+  <label>transform sum inputValue to Ast<Input
+      @value={{this.calculatorValue}}
+    /></label>
+  <button
+    type='button'
+    {{on 'click' this.transformCalculatorAst}}
+  >CALCULATOR转换</button>
+</div>
+
 {{outlet}}
