@@ -1,12 +1,18 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
-import { toSqlAst, toSumAst, toCalculatorAst, toAnyAst, error } from '../utils';
+import {
+  toSqlAst,
+  toSumAst,
+  toCalculatorAst,
+  toAnyAst,
+  faultTolerant,
+} from '../utils';
 export default class ApplicationController extends Controller {
   sqlValue = 'SELECT column1,column2 FROM table2 WHERE a > b';
   sumValue = 'SUM([field_1] + [field_2])';
   calculatorValue = '100 + 2 * 3 * 100';
   anyValue = '100 + 2 * 3 * 100';
-  errorValue = '{ "key"   666}';
+  faultTolerantValue = '{ "key"   666}';
 
   @action
   transformSQLAst() {
@@ -28,8 +34,8 @@ export default class ApplicationController extends Controller {
     console.log(toAnyAst(this.anyValue));
   }
   @action
-  errorFun() {
-    let parsingResult = error.parse(this.errorValue);
+  faultTolerantFun() {
+    let parsingResult = faultTolerant.parse(this.faultTolerantValue);
 
     // Even though we had a syntax error (missing comma) the whole input was parsed
     // inspect the parsing result to see both the syntax error and that the output Parse Tree (CST)

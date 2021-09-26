@@ -31,8 +31,11 @@
 </div>
 
 <div class='item'>
-  <label>error<Input @value={{this.errorValue}} /></label>
-  <button type='button' {{on 'click' this.errorFun}}>testError</button>
+  <label>faultTolerant<Input @value={{this.faultTolerantValue}} /></label>
+  <button
+    type='button'
+    {{on 'click' this.faultTolerantFun}}
+  >testFaultTolerant</button>
 </div>
 
 {{outlet}}
