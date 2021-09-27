@@ -38,4 +38,12 @@
   >testFaultTolerant</button>
 </div>
 
+<div class='item'>
+  <label>customLexerError<Input @value={{this.customLexerErrorValue}} /></label>
+  <button
+    type='button'
+    {{on 'click' this.customLexerErrorFun}}
+  >testCustomLexerError</button>
+</div>
+
 {{outlet}}

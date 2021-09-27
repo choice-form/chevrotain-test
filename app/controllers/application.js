@@ -6,6 +6,7 @@ import {
   toCalculatorAst,
   toAnyAst,
   faultTolerant,
+  tokenize,
 } from '../utils';
 export default class ApplicationController extends Controller {
   sqlValue = 'SELECT column1,column2 FROM table2 WHERE a > b';
@@ -13,7 +14,7 @@ export default class ApplicationController extends Controller {
   calculatorValue = '100 + 2 * 3 * 100';
   anyValue = '100 + 2 * 3 * 100';
   faultTolerantValue = '{ "key"   666}';
-
+  customLexerErrorValue = 'A B C D';
   @action
   transformSQLAst() {
     console.log(toSqlAst(this.sqlValue));
@@ -41,5 +42,10 @@ export default class ApplicationController extends Controller {
     // inspect the parsing result to see both the syntax error and that the output Parse Tree (CST)
     // Which even includes the '666' and '}'
     console.log(JSON.stringify(parsingResult, null, '\t'));
+  }
+
+  @action
+  customLexerErrorFun() {
+    console.log(tokenize(this.customLexerErrorValue));
   }
 }
