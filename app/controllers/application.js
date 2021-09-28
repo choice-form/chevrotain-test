@@ -7,6 +7,7 @@ import {
   toAnyAst,
   faultTolerant,
   tokenize,
+  customParser,
 } from '../utils';
 export default class ApplicationController extends Controller {
   sqlValue = 'SELECT column1,column2 FROM table2 WHERE a > b';
@@ -47,5 +48,10 @@ export default class ApplicationController extends Controller {
   @action
   customLexerErrorFun() {
     console.log(tokenize(this.customLexerErrorValue));
+  }
+
+  @action
+  customParserErrorFun() {
+    customParser();
   }
 }

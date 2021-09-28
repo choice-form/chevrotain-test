@@ -4,7 +4,7 @@ import { toAst as toCalculatorAst } from './calculator/step3-visitor';
 import { toAst as toAnyAst } from './any/step3-visitor';
 import faultTolerant from './faultTolerant/step4';
 import { tokenize } from './customError/lexer/index';
-
+import { customParser } from './customError/parser/index';
 export {
   toSqlAst,
   toSumAst,
@@ -12,4 +12,5 @@ export {
   toAnyAst,
   faultTolerant,
   tokenize,
+  customParser,
 };
